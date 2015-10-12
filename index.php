@@ -1,0 +1,344 @@
+<?php
+	$title = "Rail Geography";
+	include "../header.php";
+?>
+	<div class="blackBody">
+		
+		<p class="googleRightAd">
+			<script type="text/javascript"><!--
+				google_ad_client = "ca-pub-9119443868853829";
+				/* Orange Right-hand Skyscraper */
+				google_ad_slot = "5959018089";
+				google_ad_width = 160;
+				google_ad_height = 600;
+				//-->
+			</script>
+			<script type="text/javascript"
+				src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+			</script>
+		</p>
+		
+		<h2>The 'rail' geography of the UK.</h2>
+
+		<div class="googleInlineAd">
+			<script type="text/javascript"><!--
+				google_ad_client = "ca-pub-9119443868853829";
+				/* MobileBanner */
+				google_ad_slot = "8642635617";
+				google_ad_width = 320;
+				google_ad_height = 50;
+				//-->
+			</script>
+			<script type="text/javascript"
+				src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+			</script>
+		</div>
+        <script src="raphael-min.js"></script>
+		<p>Click on a city to redraw Great Britain according to the fastest journey time by train between that city and the rest of the UK.
+		Click again to see real distances from that city. An equivalent map for France is available <a href="../cartetrainfrance">here</a>.</p>
+        <div class="centredImage" id="mapholder"></div>
+		
+		<div class="bodyDiv">	
+			<!-- I have a facebook like button so I need this. -->
+			<div id="fb-root"></div>
+			<script>(function(d, s, id) {
+			  var js, fjs = d.getElementsByTagName(s)[0];
+			  if (d.getElementById(id)) return;
+			  js = d.createElement(s); js.id = id;
+			  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=299378450105936";
+			  fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));</script>			
+
+			<!-- share to twitter code -->
+			<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.tomforth.co.uk/traintimes/">Tweet</a>
+			<script>
+				!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+			</script>
+		
+
+			<!-- share to google+ code -->
+			
+			<div class="g-plusone" data-size="medium"></div>
+			<script type="text/javascript">
+			  (function() {
+				var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+				po.src = 'https://apis.google.com/js/plusone.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+			  })();
+			</script>
+						
+			<!-- Facebook button code (relies on eariler sdk js) -->
+			<div class="fb-like" data-href="http://www.tomforth.co.uk/traintimes/" data-width="450" data-layout="button_count" data-show-faces="true" data-send="false"></div>
+			
+		</div>
+		
+        <div style="display:none;" id="distortCode"></div>
+        <script>
+            // Global arrays and data
+            var cities = ["London", "Birmingham", "Manchester", "Leeds", "Glasgow", "Liverpool", "Southampton", "Newcastle", "Nottingham", "Sheffield", "Bristol", "Brighton", "Edinburgh", "Cardiff", "Norwich", "Aberdeen", "Plymouth", "Inverness", "Hull", "Carlisle", "Middlesbrough", "Canterbury"]; var lats = [51.507, 52.483, 53.467, 53.8, 55.858, 53.4, 50.75, 54.966667, 52.95, 53.383333, 51.45, 50.842941, 55.95, 51.483333, 52.6166666666667, 57.1526, 50.3666666666667, 57.4717, 53.7333333333333, 54.891, 54.5666666666667, 51.275]; var longs = [-0.1275, -1.893611, -2.233333, -1.549167, -4.259, -3, -1.40416, -1.616667, -1.133333, -1.466667, -2.583333, 0.131312, -3.183333, -3.18333, 1.28333333333333, -2.11, -3.86666666666667, -4.2254, -0.316666666666667, -2.9439, -0.766666666666667, 1.087];
+            var London = [0, 82, 125, 132, 271, 128, 87, 170, 104, 125, 100, 65, 262, 121, 113, 426, 227, 486, 160, 196, 180, 56]; var Birmingham = [82, 0, 85, 118, 236, 103, 159, 197, 82, 74, 86, 178, 241, 119, 233, 390, 207, 454, 186, 162, 207, 188]; var Manchester = [125, 85, 0, 52, 189, 51, 246, 158, 107, 50, 181, 225, 199, 201, 274, 364, 314, 458, 113, 100, 153, 223]; var Leeds = [132, 118, 52, 0, 249, 110, 301, 89, 117, 40, 209, 240, 180, 263, 208, 353, 330, 420, 53, 165, 91, 218]; var Glasgow = [271, 236, 189, 249, 0, 205, 402, 123, 330, 290, 351, 372, 54, 338, 403, 156, 461, 196, 206, 70, 237, 398]; var Liverpool = [128, 103, 51, 110, 205, 0, 278, 210, 168, 113, 197, 220, 204, 213, 331, 366, 343, 417, 193, 122, 228, 230]; var Southampton = [87, 159, 246, 301, 402, 278, 0, 320, 257, 242, 115, 105, 426, 171, 260, 583, 231, 636, 288, 331, 330, 188]; var Newcastle = [170, 197, 158, 89, 123, 210, 320, 0, 185, 113, 295, 270, 89, 337, 255, 262, 418, 302, 139, 82, 79, 280]; var Nottingham = [104, 82, 107, 117, 330, 168, 257, 185, 0, 51, 182, 216, 290, 210, 160, 455, 304, 540, 178, 241, 185, 190]; var Sheffield = [125, 74, 50, 40, 290, 113, 242, 113, 51, 0, 168, 235, 225, 212, 220, 389, 287, 453, 88, 182, 129, 237]; var Bristol = [100, 86, 181, 209, 351, 197, 115, 295, 182, 168, 0, 148, 398, 50, 290, 516, 122, 564, 279, 270, 325, 218]; var Brighton = [65, 178, 225, 240, 372, 220, 105, 270, 216, 235, 148, 0, 381, 246, 228, 543, 300, 598, 285, 304, 293, 149]; var Edinburgh = [262, 241, 199, 180, 54, 204, 426, 89, 290, 225, 398, 381, 0, 345, 343, 140, 518, 202, 233, 77, 169, 357]; var Cardiff = [121, 119, 201, 263, 338, 213, 171, 337, 210, 212, 50, 246, 345, 0, 295, 541, 197, 573, 314, 279, 360, 223]; var Norwich = [113, 233, 274, 208, 403, 331, 260, 255, 160, 220, 290, 228, 343, 295, 0, 541, 361, 537, 239, 360, 240, 188]; var Aberdeen = [426, 390, 364, 353, 156, 366, 583, 262, 455, 389, 516, 543, 140, 541, 541, 0, 686, 130, 402, 226, 327, 526]; var Plymouth = [227, 207, 314, 330, 461, 343, 231, 418, 304, 287, 122, 300, 518, 197, 361, 686, 0, 701, 404, 395, 420, 328]; var Inverness = [486, 454, 458, 420, 196, 417, 636, 302, 540, 453, 564, 598, 202, 573, 537, 130, 701, 0, 473, 303, 385, 585]; var Hull = [160, 186, 113, 53, 206, 193, 288, 139, 178, 88, 279, 285, 233, 314, 239, 402, 404, 473, 0, 237, 174, 253]; var Carlisle = [196, 162, 100, 165, 70, 122, 331, 82, 241, 182, 270, 304, 77, 279, 360, 226, 395, 303, 237, 0, 171, 334]; var Middlesbrough = [180, 207, 153, 91, 237, 228, 330, 79, 185, 129, 325, 293, 169, 360, 240, 327, 420, 385, 174, 171, 0, 288]; var Canterbury = [56, 188, 223, 218, 398, 230, 188, 280, 190, 237, 218, 149, 357, 223, 188, 526, 328, 585, 253, 334, 288, 0];
+
+            var alteredLats = [];
+            var alteredLongs = [];
+            var originalLats = [];
+            var originalLongs = [];
+
+            var drawnCities = [];
+            var drawnLabels = [];
+            var drawnEdges = [];
+            var distanceCircles = [];
+            var distanceLabelsUp = [];
+            var distanceLabelsDown = [];
+
+            var paper = new Raphael("mapholder", 478, 837);
+            var backgroundImage = paper.image("ukmap_half.png", 0, 0, 478, 837).attr({ "opacity": 0.5 });
+            var topImage;
+
+            var lastCity;
+
+            var yscale = 47; 
+            var xscale = 28.8;
+            var originLat = 63.2;
+            var originLon = -10.1;
+
+            function writeBatch() {
+                for (m = 0; m < cities.length; m++) {
+                    cityClickHandler(1);
+                }
+            }
+
+            function init() {
+                // clear any previous inits
+                for (i in drawnCities) {
+                    drawnCities[i].remove();
+                }
+                for (i in drawnLabels) {
+                    drawnLabels[i].remove();
+                }
+                for (i in distanceCircles) {
+                    distanceCircles[i].remove();
+                }
+                for (i in distanceLabelsDown) {
+                    distanceLabelsDown[i].remove();
+                }
+                for (i in distanceLabelsUp) {
+                    distanceLabelsUp[i].remove();
+                }
+
+                // set origin to 8W, 59N (top left of mainland GB)
+                for (i = 0; i < lats.length; i++) {
+                    originalLats[i] = originLat - lats[i];
+                    originalLongs[i] = longs[i] - originLon;
+                }
+
+                // draw cities in geographical positions
+                for (i = 0; i < cities.length; i++) {
+                    drawnCities[i] = paper.circle(originalLongs[i] * xscale, originalLats[i] * yscale, 3).data({ "cityNumber": i }).click(cityClickHandler).attr({ "fill": "red" });
+                    drawnLabels[i] = paper.text(originalLongs[i] * xscale, originalLats[i] * yscale + 9, cities[i]).attr({ 'font-size': 9 }).data({ "cityNumber": i }).click(cityClickHandler);
+                }
+            }
+
+            function resetGeography() {
+                for (i = 0; i < drawnCities.length; i++) {
+                    drawnCities[i].animate({ cx: originalLongs[i] * xscale, cy: originalLats[i] * yscale }, 2000, 'elastic');
+                    drawnLabels[i].remove();
+                    drawnLabels[i] = paper.text(originalLongs[i] * xscale, originalLats[i] * yscale + 9, cities[i]).attr({ 'font-size': 9 }).data({ "cityNumber": i }).click(cityClickHandler);
+                    drawnCities[i].toFront();
+                    topImage.remove();
+                }
+                for (i in distanceLabelsUp) {
+                    if (i == 0) {
+                        distanceLabelsUp[i].attr({ 'text': '70 miles' });
+                        distanceLabelsDown[i].attr({ 'text': '70 miles' });
+                    }
+                    else {
+                        distanceLabelsUp[i].attr({ 'text': 140 * i + ' miles' });
+                        distanceLabelsDown[i].attr({ 'text': 140 * i + ' miles' });
+                    }
+                }
+            }
+
+            function cityClickHandler(m) {
+                if (arguments[0]!=1) {
+                    pos = this.data("cityNumber");
+                    try {
+                        topImage.remove();
+                    }
+                    catch (e) {
+                    }
+
+                    topImage = paper.image(cities[pos] + ".png", 0, 0, 478, 837).attr({ 'opacity': 0 }).toFront();
+                    topImage.animate({ 'opacity': 0.2 }, 2000, "<>");
+                }
+                else {
+                    pos = m;
+                }
+
+                if (cities[pos] == lastCity) {
+                    resetGeography();
+                    lastCity = null;
+                }
+                else {
+                    lastCity = cities[pos];
+
+                    // move the selected city to the front of the arrays so it becomes centred
+                    cities = cities.slice(pos).concat(cities.slice(0, pos));
+                    lats = lats.slice(pos).concat(lats.slice(0, pos));
+                    longs = longs.slice(pos).concat(longs.slice(0, pos));
+
+                    // re-organise city arrays
+                    for (i = 0; i < cities.length; i++) {
+                        city = i + 1;
+                        switch (city) {
+                            case 1: London = London.slice(pos).concat(London.slice(0, pos)); break;
+                            case 2: Birmingham = Birmingham.slice(pos).concat(Birmingham.slice(0, pos)); break;
+                            case 3: Manchester = Manchester.slice(pos).concat(Manchester.slice(0, pos)); break;
+                            case 4: Leeds = Leeds.slice(pos).concat(Leeds.slice(0, pos)); break;
+                            case 5: Glasgow = Glasgow.slice(pos).concat(Glasgow.slice(0, pos)); break;
+                            case 6: Liverpool = Liverpool.slice(pos).concat(Liverpool.slice(0, pos)); break;
+                            case 7: Southampton = Southampton.slice(pos).concat(Southampton.slice(0, pos)); break;
+                            case 8: Newcastle = Newcastle.slice(pos).concat(Newcastle.slice(0, pos)); break;
+                            case 9: Nottingham = Nottingham.slice(pos).concat(Nottingham.slice(0, pos)); break;
+                            case 10: Sheffield = Sheffield.slice(pos).concat(Sheffield.slice(0, pos)); break;
+                            case 11: Bristol = Bristol.slice(pos).concat(Bristol.slice(0, pos)); break;
+                            case 12: Brighton = Brighton.slice(pos).concat(Brighton.slice(0, pos)); break;
+                            case 13: Edinburgh = Edinburgh.slice(pos).concat(Edinburgh.slice(0, pos)); break;
+                            case 14: Cardiff = Cardiff.slice(pos).concat(Cardiff.slice(0, pos)); break;
+                            case 15: Norwich = Norwich.slice(pos).concat(Norwich.slice(0, pos)); break;
+                            case 16: Aberdeen = Aberdeen.slice(pos).concat(Aberdeen.slice(0, pos)); break;
+                            case 17: Plymouth = Plymouth.slice(pos).concat(Plymouth.slice(0, pos)); break;
+                            case 18: Inverness = Inverness.slice(pos).concat(Inverness.slice(0, pos)); break;
+                            case 19: Hull = Hull.slice(pos).concat(Hull.slice(0, pos)); break;
+                            case 20: Carlisle = Carlisle.slice(pos).concat(Carlisle.slice(0, pos)); break;
+                            case 21: Middlesbrough = Middlesbrough.slice(pos).concat(Middlesbrough.slice(0, pos)); break;
+                            case 22: Canterbury = Canterbury.slice(pos).concat(Canterbury.slice(0, pos)); break;
+                        }
+                    }
+
+                    init();
+                    updatePositions();
+                }
+            }
+
+            function updatePositions() {                
+                calculateNewPositions();
+
+                // set origin to top left of map
+                for (i = 0; i < alteredLats.length; i++) {
+                    alteredLats[i] = originLat - alteredLats[i];
+                    alteredLongs[i] = alteredLongs[i] - originLon;
+                }
+
+                // draw time of travel circles around the origin city
+                for (d = 0; d < 6; d++) {
+                    if (d == 0) {
+                        distanceCircles[d] = paper.circle(alteredLongs[0] * xscale, alteredLats[0] * yscale, 48).attr({ 'opacity': 0.2 }); // 96 makes circles 2 hours of travel
+                        //distanceCircles[d].animate({ r: 96 * 0.5, 'opacity': 0.2 }, 800);
+                        distanceLabelsUp[d] = paper.text(alteredLongs[0] * xscale, alteredLats[0] * yscale - 0.5 * 96 - 8, '1 hour').attr({ 'opacity': 0.2 });
+                        distanceLabelsDown[d] = paper.text(alteredLongs[0] * xscale, alteredLats[0] * yscale + 0.5 * 96 + 8, '1 hour').attr({ 'opacity': 0.2 });
+                    }
+                    else {
+                        distanceCircles[d] = paper.circle(alteredLongs[0] * xscale, alteredLats[0] * yscale, 96 * d).attr({ 'opacity': 0.2 }); // 96 makes circles 2 hours of travel
+                        //distanceCircles[d].animate({ r: 96 * d, 'opacity': 0.2 }, 800);
+                        distanceLabelsUp[d] = paper.text(alteredLongs[0] * xscale, alteredLats[0] * yscale - d * 96 -8, d * 2 + ' hours').attr({ 'opacity': 0.2 });
+                        distanceLabelsDown[d] = paper.text(alteredLongs[0] * xscale, alteredLats[0] * yscale + d * 96 + 8, d * 2 + ' hours').attr({ 'opacity': 0.2 });
+                    }
+                }
+
+                // Animate new city positions and write batch code for imagemagick distortion
+                document.getElementById('distortCode').innerHTML += 'convert ukmap_half.png -background red -flatten -define shepards:power=4.0 -distort Shepards "';
+                for (i = 0; i < drawnCities.length; i++) {
+                    document.getElementById('distortCode').innerHTML += Math.round((longs[i] - originLon) * xscale) + ',' + Math.round((originLat - lats[i]) * yscale) + ' ' + Math.round(alteredLongs[i] * xscale) + ',' + Math.round(alteredLats[i] * yscale) + '  ';
+                    drawnCities[i].animate({ cx: alteredLongs[i] * xscale, cy: alteredLats[i] * yscale }, 3000, "elastic");
+                    drawnLabels[i].remove();
+                    drawnLabels[i] = paper.text(alteredLongs[i] * xscale, alteredLats[i] * yscale + 9, cities[i]).attr({ 'font-size': 9 }).data({ "cityNumber": i }).click(cityClickHandler);
+                    drawnCities[i].toFront();
+                }
+                document.getElementById('distortCode').innerHTML += '" ' + cities[0] + '.png' + '<br />';
+                drawnCities[0].attr({ "fill": "yellow" });
+            }
+
+            function calculateNewPositions() {
+                var transposedLats = [];
+                var transposedLongs = [];
+
+                var distanceFromOrigin = [];
+                var speedFromOrigin = [];
+
+                var scaledLats = [];
+                var scaledLongs = [];
+
+                // make a copy of longs and lats for manipulation so I've still got the originals.
+                for (i = 0; i < lats.length; i++) {
+                    alteredLats[i] = lats[i];
+                    alteredLongs[i] = longs[i];
+                }
+
+                // set origin to current city
+                for (i = 0; i < alteredLats.length; i++) {
+                    transposedLats[i] = alteredLats[i] - alteredLats[0];
+                    transposedLongs[i] = alteredLongs[i] - alteredLongs[0];
+                    // the 111km and 68km figures are valid only at 52-53deg N and -1-0deg W
+                    distanceFromOrigin[i] = Math.sqrt(transposedLats[i] * 69 * transposedLats[i] * 69 + transposedLongs[i] * 42 * transposedLongs[i] * 42);
+                    timeFromOrigin = eval(cities[0])[i];
+                    if (timeFromOrigin == 0) {
+                        speedFromOrigin[i] = 100000000000; // hackedy hack hack.
+                    } else {
+                        speedFromOrigin[i] = distanceFromOrigin[i] / timeFromOrigin;
+                    }
+                }
+
+                // move cities closer or further away from
+                var scaleSpeed = 70; //mph
+                var scaleConstant = scaleSpeed / 60; // (mile/minute)
+                for (i = 0; i < transposedLats.length; i++) {
+                    scaledLats[i] = (scaleConstant / speedFromOrigin[i]) * transposedLats[i];
+                    scaledLongs[i] = (scaleConstant / speedFromOrigin[i]) * transposedLongs[i];
+                }
+
+                // set scaled lats to alteredLats ready for next loop
+                for (i = 0; i < lats.length; i++) {
+                    alteredLats[i] = scaledLats[i];
+                    alteredLongs[i] = scaledLongs[i];
+                }
+
+                // set origin to first city
+                for (i = 0; i < alteredLats.length; i++) {
+                    transposedLats[i] = alteredLats[i] - alteredLats[0];
+                    transposedLongs[i] = alteredLongs[i] - alteredLongs[0];
+                }
+
+                // convert lats and longs back to standard
+                for (i = 0; i < alteredLats.length; i++) {
+                    alteredLats[i] = transposedLats[i] + lats[0];
+                    alteredLongs[i] = transposedLongs[i] + longs[0];
+                }
+            }
+        </script>
+				<script type="text/javascript">
+			// A cheeky hack from http://stackoverflow.com/questions/6944037/how-to-run-java-script-code-before-page-load
+			function preloadFunc()  {
+				init();
+			}
+			window.onpaint = preloadFunc();
+		</script>
+		<div id="disqus_thread" class="disqus">
+			<script type="text/javascript">
+			    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+			    var disqus_shortname = 'traintimes'; // required: replace example with your forum shortname
+			
+			    /* * * DON'T EDIT BELOW THIS LINE * * */
+			    (function() {
+			        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+			        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			    })();
+			</script>
+			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+			<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+		</div>
+	</div>	
+	
+<?php
+	include "../footer.php";
+?>

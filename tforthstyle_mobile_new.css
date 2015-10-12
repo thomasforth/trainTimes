@@ -1,0 +1,109 @@
+﻿body {
+	font-family: Arial, Helvetica, sans-serif;
+	text-align:left;
+}
+h1 {
+margin: 0px;
+padding: 0px;
+}
+h2 {
+	font-size:large;
+	padding-top:15px;
+	vertical-align:middle;
+    text-align:center;
+}
+ul, p, button, .bodyDiv{
+	margin:15px 5px 15px 5px;
+	font-size:medium;
+	line-height:120%;
+}
+h3{
+	margin:15px 5px 15px 5px;
+	font-weight:bold;
+	font-size:large;
+}
+
+.smallList {
+    padding: 1px 1px 1px 5px;
+    margin: 5px 0px 5px 0px;
+}
+.bigList {
+    padding: 4px 5px 4px 5px;
+    margin: 5px 0px 5px 0px;
+}
+    .bigList span {
+        display: block;
+        color: white;
+        padding: 0px 0px 4px 0px;
+    }
+
+    .smallList span {
+        display: block;
+        color: white;
+        padding: 0px 0px 2px 0px;
+    }
+    .bigList a{
+        background-color: white;
+    }
+    .smallList a {
+        background-color: white;
+    }
+
+.googleInlineAd {
+	text-align:center;
+}
+.googleRightAd{
+	display: none;
+}
+
+.siteBackground {
+	margin: 0px auto 0px auto;
+	color:black;
+}	
+a img{
+border:0;
+}
+.contentBackground {
+	background-color: #1b5790;
+	width:100%;
+	margin: 0 auto;
+}
+.blackBody {
+	background-color: #FFF6BE;
+	color:black;
+	padding-bottom:0px;
+	font-size:medium;
+}	
+.tableImage{
+	height:40px;
+	width:auto;
+    vertical-align:middle;
+}
+img.headerImage, img.footerImage{
+	height:auto;
+	width:98%;
+	margin: 0 auto;
+}
+
+
+.quote{	
+	margin:25px 15px 25px 15px;
+	font-weight:bold;
+	font-size:small;
+	font-style:italic; 
+}	
+.disqus{
+	margin:15px 5px 15px 5px;
+	font-size:small;
+}		
+.updates{
+	margin:15px 5px 15px 5px;		
+	font-style:italic;
+	font-size:medium;
+	color:red;
+}	
+.centredImage{
+	margin:15px 5px 15px 5px;
+	text-align:center;
+	background-color:white;
+}

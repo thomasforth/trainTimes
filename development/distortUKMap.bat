@@ -1,0 +1,1 @@
+convert ukmap_half.old.png -define distort:viewport=498x624-69-42 -virtual-pixel White -distort SRT 0 +repage ukmap_half_new.png
